@@ -90,6 +90,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         print(self.path)
         if self.path == '/data':
             self.get_data()
+            return
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.send_header('Content-Length', getsize("index.html"))
