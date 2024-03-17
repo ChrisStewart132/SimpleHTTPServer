@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <style>
+            *{
+                text-align: center;
+                padding: 5px;
+                background-color: black;
+                color: white; 
+            }
+            span{
+                border: 1px solid white;
+            }
+            span:hover{
+                background-color: white ;
+                color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Website</h1>
+        <div>
+            <h1>Update Database</h1>
+            <span>Key</span><input id="key">
+            <span>Value</span><input id="value">
+            <span onclick="post()">POST</span>
+        </div> 
+        
+        <div>
+            <h1>Database</h1>
+            <span onclick="getData()">GET DATA</span>
+            <p id="database"></p>
+        </div>
+
+        <script>
+            getData();
+            function getData(){
+                console.log("getting data")
+                fetch('/data')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json(); // Parse response body as JSON
+                    })
+                    .then(data => {
+                        //console.log('Success:', data);
+                        document.getElementById("database").innerHTML = JSON.stringify(data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+            
+
+            function post(){
+                let data = {};
+                const key = document.getElementById("key").value
+                const value = document.getElementById("value").value
+                data[key] = value;
+                console.log("posting data " + JSON.stringify(data));
+                postData('127.0.0.1:80', data);
+            }
+            function postData(url = '', data = {}) {
+                const options = {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                };
+                fetch(url, options)
+                    .then(response => {
+                        getData();
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.ok; //response.json() if the server responds with a json obj
+                    })
+                    .then(response => {
+                        //console.log('Success:', response);
+                    })
+                    .catch(error => {
+                        console.error('Post Error:', error);
+                    });
+                }
+
+        </script>
+    </body>
+</html>
